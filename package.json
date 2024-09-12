@@ -4,7 +4,7 @@
   "private": false,
   "description": "Vue 3 multiselect component with single select, multiselect and tagging options.",
   "license": "MIT",
-  "author": "Adam Berecz <adam@vueform.com>",
+  "author": "",
   "main": "./dist/multiselect.js",
   "types": "./src/index.d.ts",
   "module": "./dist/multiselect.mjs",
@@ -33,13 +33,6 @@
     "./dist/*": "./dist/*",
     "./themes/*": "./themes/*",
     "./package.json": "./package.json"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vueform/multiselect.git"
-  },
-  "bugs": {
-    "url": "https://github.com/vueform/multiselect/issues"
   },
   "scripts": {
     "build": "npm run build:vue2; npm run build:vue3; npm run build:themes",
