@@ -168,7 +168,8 @@
     </div>
 
     <!-- Options -->
-    <Teleport :to="appendTo || 'body'" :disabled="!appendToBody && !appendTo">
+<!--      <Teleport :to="appendTo || 'body'" :disabled="!appendToBody && !appendTo">  -->
+    <Teleport :to="target" :disabled="!target"> 
       <div
         :id="id ? `${id}-dropdown` : undefined"
         :class="classList.dropdown"
@@ -319,6 +320,11 @@
       'input', 'search-change', 'tag', 'option', 'update:modelValue',
       'change', 'clear', 'keydown', 'keyup', 'max', 'create',
     ],
+    data() {
+      return {
+        target: null,
+      }
+    },
     props: {
       value: {
         required: false,
@@ -641,6 +647,11 @@
         type: Boolean,
         default: false,
       },
+      to: {
+        required: false,
+        type: String,
+        default: undefined,
+      },
       closeOnScroll: {
         required: false,
         type: Boolean,
@@ -675,6 +686,21 @@
         useClasses,
         useA11y,
       ])
+    },
+    mounted() {
+      console.log('mounted: ',this.to);
+      const observer = new MutationObserver((mutationList, observer) => {
+        for (const mutation of mutationList) {
+        if (mutation.type !== 'childList') continue
+        const el = document.querySelector(this.to)
+        if (!el) continue
+        this.target = el
+        observer.disconnect()
+        break
+      }
+      });
+      observer.observe(document, { childList: true, subtree: true })
+      return () => observer.disconnect()
     },
     beforeMount() {
       if ((this.$root.constructor && this.$root.constructor.version && this.$root.constructor.version.match(/^2\./)) || this.vueVersionMs === 2) {

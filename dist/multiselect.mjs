@@ -3964,6 +3964,11 @@ var script = {
       'input', 'search-change', 'tag', 'option', 'update:modelValue',
       'change', 'clear', 'keydown', 'keyup', 'max', 'create',
     ],
+    data() {
+      return {
+        target: null,
+      }
+    },
     props: {
       value: {
         required: false,
@@ -4286,6 +4291,11 @@ var script = {
         type: Boolean,
         default: false,
       },
+      to: {
+        required: false,
+        type: String,
+        default: undefined,
+      },
       closeOnScroll: {
         required: false,
         type: Boolean,
@@ -4320,6 +4330,21 @@ var script = {
         useClasses,
         useA11y,
       ])
+    },
+    mounted() {
+      console.log('mounted: ',this.to);
+      const observer = new MutationObserver((mutationList, observer) => {
+        for (const mutation of mutationList) {
+        if (mutation.type !== 'childList') continue
+        const el = document.querySelector(this.to);
+        if (!el) continue
+        this.target = el;
+        observer.disconnect();
+        break
+      }
+      });
+      observer.observe(document, { childList: true, subtree: true });
+      return () => observer.disconnect()
     },
     beforeMount() {
       if ((this.$root.constructor && this.$root.constructor.version && this.$root.constructor.version.match(/^2\./)) || this.vueVersionMs === 2) {
@@ -4563,9 +4588,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         : createCommentVNode("v-if", true)
     ], 16 /* FULL_PROPS */, _hoisted_2),
     createCommentVNode(" Options "),
+    createCommentVNode("      <Teleport :to=\"appendTo || 'body'\" :disabled=\"!appendToBody && !appendTo\">  "),
     (openBlock(), createBlock(Teleport, {
-      to: $props.appendTo || 'body',
-      disabled: !$props.appendToBody && !$props.appendTo
+      to: $data.target,
+      disabled: !$data.target
     }, [
       createElementVNode("div", {
         id: $props.id ? `${$props.id}-dropdown` : undefined,
